@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\TOS.Data.MongoDB\TOS.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\Common\TOS.Data\TOS.Data.csproj" />
+    <ProjectReference Include="..\TOS.Security.Models\TOS.Security.Models.csproj" />
+  </ItemGroup>
+
+</Project>

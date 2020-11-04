@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.11.3" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\TOS.Common.MongoDB\TOS.Common.MongoDB.csproj" />
+    <ProjectReference Include="..\TOS.Common.Text.Semantics\TOS.Common.Text.Semantics.csproj" />
+    <ProjectReference Include="..\TOS.Common\TOS.Common.csproj" />
+    <ProjectReference Include="..\TOS.Data\TOS.Data.csproj" />
+  </ItemGroup>
+
+</Project>

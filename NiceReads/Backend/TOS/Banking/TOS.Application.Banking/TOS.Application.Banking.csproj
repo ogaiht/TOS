@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TOS.Common\TOS.Common.csproj" />
+    <ProjectReference Include="..\..\TOS.CQRS\TOS.CQRS.csproj" />
+    <ProjectReference Include="..\TOS.Data.Banking\TOS.Data.Banking.csproj" />
+    <ProjectReference Include="..\TOS.Models.Banking\TOS.Models.Banking.csproj" />
+  </ItemGroup>
+
+</Project>

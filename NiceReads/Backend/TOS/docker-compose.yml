@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  tos.nicereads.web:
+    image: ${DOCKER_REGISTRY-}tosnicereadsweb
+    build:
+      context: .
+      dockerfile: NiceReads/TOS.NiceReads.Web/Dockerfile
+

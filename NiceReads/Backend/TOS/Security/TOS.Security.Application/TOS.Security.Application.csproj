@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\TOS.CQRS\TOS.CQRS.csproj" />
+    <ProjectReference Include="..\..\Common\TOS.Data\TOS.Data.csproj" />
+    <ProjectReference Include="..\TOS.Security.Data\TOS.Security.Data.csproj" />
+    <ProjectReference Include="..\TOS.Security.Models\TOS.Security.Models.csproj" />
+  </ItemGroup>
+
+</Project>
