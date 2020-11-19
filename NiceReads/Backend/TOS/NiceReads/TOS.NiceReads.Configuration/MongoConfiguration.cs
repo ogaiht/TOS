@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
+using System.Security.Authentication;
 using TOS.Common.Configuration;
 using TOS.Data.MongoDB;
 
@@ -16,13 +17,24 @@ namespace TOS.NiceReads.Configuration
                 .AddScoped<IMongoDatabase>(factory =>
                 {
                     IDatabaseSettings settings = factory.GetService<IDatabaseSettings>();
-                    string connectionString = new MongoConnectionStringBuilder().Build(settings);
-                    IMongoClient mongoClient = new MongoClient(connectionString);
+                    MongoClientSettings mongoClientSettings;
+                    if (settings.UseCosmos)
+                    {
+                        mongoClientSettings = MongoClientSettings.FromUrl(new MongoUrl(settings.ConnectionString));
+                        mongoClientSettings.SslSettings = new SslSettings() { EnabledSslProtocols = SslProtocols.Tls12 };
+                    }
+                    else
+                    {
+                        mongoClientSettings = MongoClientSettings.FromConnectionString(new MongoConnectionStringBuilder().Build(settings));
+                    }
+                    //string connectionString = new MongoConnectionStringBuilder().Build(settings);                    
+
+                    IMongoClient mongoClient = new MongoClient(mongoClientSettings);
                     IMongoDatabase mongoDatabase = mongoClient.GetDatabase(settings.Database);
                     return mongoDatabase;
                 })
                 .AddSingleton<ICollectionNameProvider, CollectionNameProvider>()
-                .AddScoped<IDatabaseProvider, DatabaseProvider>();            
+                .AddScoped<IDatabaseProvider, DatabaseProvider>();
         }
     }
 
@@ -41,6 +53,8 @@ namespace TOS.NiceReads.Configuration
         int Port { get; }
         string User { get; }
         string Password { get; }
+        string ConnectionString { get; }
+        bool UseCosmos { get; }
     }
 
     public class DatabaseSettings : IDatabaseSettings
@@ -50,5 +64,7 @@ namespace TOS.NiceReads.Configuration
         public int Port { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
+        public string ConnectionString { get; set; }
+        public bool UseCosmos { get; set; }
     }
 }

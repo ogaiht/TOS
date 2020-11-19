@@ -20,14 +20,14 @@ namespace TOS.CQRS.Executions
 
     public abstract class ExecutionRequest<TResult> : ExecutionRequest, IExecutionRequest<TResult>
     {
-        protected ExecutionRequest()            
+        protected ExecutionRequest()
         {
 
         }
 
         protected ExecutionRequest(Guid executionId)
             : base(executionId)
-        {            
+        {
         }
     }
 }
