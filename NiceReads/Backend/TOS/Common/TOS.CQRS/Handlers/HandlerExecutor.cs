@@ -1,79 +1,64 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using TOS.Common.Serialization.Json;
 using TOS.CQRS.Executions;
-using TOS.Extensions.Logging;
+using TOS.CQRS.Logging;
 
 namespace TOS.CQRS.Handlers
 {
     public class HandlerExecutor : IHandlerExecutor
     {
-        private readonly IJsonSerializer _jsonSerializer;
-        private readonly ILogger<HandlerExecutor> _logger;
+        private readonly IHandlerExecutorLogger _handlerExecutorLogger;
 
-        public HandlerExecutor(ILogger<HandlerExecutor> logger, IJsonSerializer jsonSerializer)
+        public HandlerExecutor(IHandlerExecutorLogger handlerExecutorLogger)
         {
-            _logger = logger;
-            _jsonSerializer = jsonSerializer;
-        }
-
-        private static string CreateExecutionId<TExecution>(object executionHandler, TExecution execution)
-            where TExecution : IExecutionRequest
-        {
-            return $"{executionHandler.GetType().FullName}:{execution.GetType().FullName}:{execution.ExecutionId}";
-        }
-
-        private Lazy<string> GetSerializedRequest(object request)
-        {
-            return new Lazy<string>(() => _jsonSerializer.Serialize(request));
+            _handlerExecutorLogger = handlerExecutorLogger;
         }
 
         public void Execute<TExecution, THandler>(THandler executionHandler, TExecution execution)
             where TExecution : IExecutionRequest
             where THandler : IExecutionHandler<TExecution>
         {
-            string identity = CreateExecutionId(executionHandler, execution);
-            Lazy<string> serializedRequest = GetSerializedRequest(execution);
-
-            BeforeExecution(identity, serializedRequest);
-            try
+            using (IHandlerExecutorLoggerScope logger = _handlerExecutorLogger.CreateScope(execution, executionHandler))
             {
-                using (_logger.TimeExecution(identity))
+                logger.BeforeExecution();
+                try
                 {
-                    executionHandler.Execute(execution);
+                    using (logger.TimeExecution())
+                    {
+                        executionHandler.Execute(execution);
+                    }
+                    logger.AfterExecution();
                 }
-                AfterExecution(identity, serializedRequest);
-            }
-            catch (Exception ex)
-            {
-                OnError(identity, serializedRequest, ex);
-                throw;
+                catch (Exception ex)
+                {
+                    logger.OnError(ex);
+                    throw;
+                }
             }
         }
 
-        public TResult Execute<TExecution, TResult, THandler>(THandler executionHandler, TExecution execution)
+        public TResult Execute<TExecution, THandler, TResult>(THandler executionHandler, TExecution execution)
             where TExecution : IExecutionRequest<TResult>
             where THandler : IExecutionHandler<TExecution, TResult>
         {
-            string identity = CreateExecutionId(executionHandler, execution);
-            Lazy<string> serializedRequest = GetSerializedRequest(execution);
-
-            BeforeExecution(identity, serializedRequest);
-            try
+            using (IHandlerExecutorLoggerScope<TResult> logger = _handlerExecutorLogger.CreateScope<TExecution, THandler, TResult>(execution, executionHandler))
             {
-                TResult result;
-                using (_logger.TimeExecution(identity))
+                logger.BeforeExecution();
+                try
                 {
-                    result = executionHandler.Execute(execution);
+                    TResult result;
+                    using (logger.TimeExecution())
+                    {
+                        result = executionHandler.Execute(execution);
+                    }
+                    logger.AfterExecution(result);
+                    return result;
                 }
-                AfterExecution(identity, serializedRequest, result);
-                return result;
-            }
-            catch (Exception ex)
-            {
-                OnError(identity, serializedRequest, ex);
-                throw;
+                catch (Exception ex)
+                {
+                    logger.OnError(ex);
+                    throw;
+                }
             }
         }
 
@@ -81,83 +66,48 @@ namespace TOS.CQRS.Handlers
             where TExecution : IAsyncExecutionRequest
             where THandler : IAsyncExecutionHandler<TExecution>
         {
-            string identity = CreateExecutionId(executionHandler, execution);
-            Lazy<string> serializedRequest = GetSerializedRequest(execution);
-
-            BeforeExecution(identity, serializedRequest);
-            try
+            using (IHandlerExecutorLoggerScope logger = _handlerExecutorLogger.CreateScopeForAsync(execution, executionHandler))
             {
-                using (_logger.TimeExecution(identity))
+                logger.BeforeExecution();
+                try
                 {
-                    await executionHandler.ExecuteAsync(execution);
+                    using (logger.TimeExecution())
+                    {
+                        await executionHandler.ExecuteAsync(execution);
+                    }
+                    logger.AfterExecution();
                 }
-                AfterExecution(identity, serializedRequest);
-            }
-            catch (Exception ex)
-            {
-                OnError(identity, serializedRequest, ex);
-                throw;
+                catch (Exception ex)
+                {
+                    logger.OnError(ex);
+                    throw;
+                }
             }
         }
 
-        public async Task<TResult> ExecuteAsync<TExecution, TResult, THandler>(THandler executionHandler, TExecution execution)
+        public async Task<TResult> ExecuteAsync<TExecution, THandler, TResult>(THandler executionHandler, TExecution execution)
             where TExecution : IAsyncExecutionRequest<TResult>
             where THandler : IAsyncExecutionHandler<TExecution, TResult>
         {
-            string identity = CreateExecutionId(executionHandler, execution);
-            Lazy<string> serializedRequest = GetSerializedRequest(execution);
-
-            BeforeExecution(identity, serializedRequest);
-            try
+            using (IHandlerExecutorLoggerScope<TResult> logger = _handlerExecutorLogger.CreateScopeForAsync<TExecution, THandler, TResult>(execution, executionHandler))
             {
-                TResult result;
-                using (_logger.TimeExecution(identity))
+                logger.BeforeExecution();
+                try
                 {
-                    result = await executionHandler.ExecuteAsync(execution);
+                    TResult result;
+                    using (logger.TimeExecution())
+                    {
+                        result = await executionHandler.ExecuteAsync(execution);
+                    }
+                    logger.AfterExecution(result);
+                    return result;
                 }
-                AfterExecution(identity, serializedRequest, result);
-                return result;
+                catch (Exception ex)
+                {
+                    logger.OnError(ex);
+                    throw;
+                }
             }
-            catch (Exception ex)
-            {
-                OnError(identity, serializedRequest, ex);
-                throw;
-            }
-        }
-
-        private void BeforeExecution(string identity, Lazy<string> serializedRequest)
-        {
-            _logger.LogInformation("Executing {identity}.", identity);
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Executing {identity} for request '{request}'.",
-                    identity, serializedRequest.Value);
-            }
-        }
-
-        private void AfterExecution(string identity, Lazy<string> serializedRequest)
-        {
-            _logger.LogInformation("Executed {identity}.", identity);
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Executed {identity} for request '{request}'.",
-                    identity, serializedRequest.Value);
-            }
-        }
-
-        private void AfterExecution<TResult>(string identity, Lazy<string> serializedRequest, TResult result)
-        {
-            _logger.LogInformation("Executed {identity}.", identity);
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Executed {identity} for request '{request}' with result '{result}'.",
-                        identity, serializedRequest.Value, _jsonSerializer.Serialize(result));
-            }
-        }
-
-        private void OnError(string identity, Lazy<string> serializedRequest, Exception ex)
-        {
-            _logger.LogError(ex, "Error on execute {identity} for {request}", identity, serializedRequest.Value);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Principal;
 using TOS.Common.Security.Tokens.Factories;
+using TOS.Common.Security.Tokens.Utils;
 
 namespace TOS.Common.Security.Tokens
 {
@@ -14,13 +15,21 @@ namespace TOS.Common.Security.Tokens
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly ISigningCredentialsFactory _signingCredentialsFactory;
         private readonly IEncryptingCredentialsFactory _encryptingCredentialsFactory;
+        private readonly ITokenTimerProvider _tokenTimerProvider;
 
-        public JwtSecurityTokenCreator(ISecurityConfig securityConfiguration, IDateTimeProvider dateTimeProvider, ISigningCredentialsFactory signingCredentialsFactory, IEncryptingCredentialsFactory encryptingCredentialsFactory)
+        public JwtSecurityTokenCreator(
+            ISecurityConfig securityConfiguration,
+            IDateTimeProvider dateTimeProvider,
+            ISigningCredentialsFactory signingCredentialsFactory,
+            IEncryptingCredentialsFactory encryptingCredentialsFactory,
+            ITokenTimerProvider tokenTimerProvider
+            )
         {
             _securityConfiguration = securityConfiguration;
             _dateTimeProvider = dateTimeProvider;
             _signingCredentialsFactory = signingCredentialsFactory;
             _encryptingCredentialsFactory = encryptingCredentialsFactory;
+            _tokenTimerProvider = tokenTimerProvider;
         }
 
         public TokenResult CreateSecurityToken(TokenCreationInfo tokenCreationInfo)
@@ -41,8 +50,7 @@ namespace TOS.Common.Security.Tokens
 
         private string CreateToken(ClaimsIdentity identity, DateTime expiresAt, int tokenNotValidBeforeSeconds)
         {
-
-            DateTime notBefore = GetNotBeforeTimeForTokenStartBeingValid(tokenNotValidBeforeSeconds);
+            DateTime notBefore = _tokenTimerProvider.GetNotValidBefore(tokenNotValidBeforeSeconds);
             SigningCredentials signingCredentials = _signingCredentialsFactory.CreateSigningCredentials(_securityConfiguration.TokenSigningSecurityKey);
             EncryptingCredentials encryptingCredentials = _encryptingCredentialsFactory.CreateEncryptingCredentials(_securityConfiguration.TokenEncryptionKey);
 
@@ -59,21 +67,14 @@ namespace TOS.Common.Security.Tokens
 
             JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler()
             {
-                TokenLifetimeInMinutes = GetTokenExpirationInMinutes(expiresAt)
+                TokenLifetimeInMinutes = _tokenTimerProvider.GetTokenExpirationInMinutes(expiresAt)
             };
 
             SecurityToken securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
             return jwtSecurityTokenHandler.WriteToken(securityToken);
         }
 
-        private static DateTime GetNotBeforeTimeForTokenStartBeingValid(int tokenNotValidBeforeSeconds)
-        {
-            return tokenNotValidBeforeSeconds == 0
-                ? DateTime.UtcNow
-                : DateTime.UtcNow.AddSeconds(tokenNotValidBeforeSeconds);
-        }
-
-        private IReadOnlyCollection<Claim> LoadUserClaims(TokenCreationInfo userInfo)
+        private static IReadOnlyCollection<Claim> LoadUserClaims(TokenCreationInfo userInfo)
         {
             IReadOnlyCollection<Claim> claims = new List<Claim>()
             {
@@ -88,12 +89,6 @@ namespace TOS.Common.Security.Tokens
         private int GetTokenRefreshTimeInSeconds()
         {
             return _securityConfiguration.TokenLifetimeInMinutes * 60;
-        }
-
-        private int GetTokenExpirationInMinutes(DateTime expirationTime)
-        {
-            int tokenExpirationInMinutes = Convert.ToInt32((expirationTime - _dateTimeProvider.UtcNow()).TotalMinutes);
-            return tokenExpirationInMinutes;
         }
     }
 }

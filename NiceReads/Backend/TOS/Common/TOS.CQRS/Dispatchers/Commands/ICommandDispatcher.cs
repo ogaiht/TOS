@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using TOS.CQRS.Commands;
 using TOS.CQRS.Executions.Commands;
 
 namespace TOS.CQRS.Dispatchers.Commands

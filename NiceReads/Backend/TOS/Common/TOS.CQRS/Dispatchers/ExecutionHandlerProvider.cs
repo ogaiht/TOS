@@ -8,7 +8,7 @@ using System;
 namespace TOS.CQRS.Dispatchers
 {
     public class ExecutionHandlerProvider : IExecutionHandlerProvider
-    {        
+    {
         private readonly IServiceProvider _serviceProvider;
         private readonly IExceptionHelper _exceptionHelper;
         private readonly ILogger<ExecutionHandlerProvider> _logger;

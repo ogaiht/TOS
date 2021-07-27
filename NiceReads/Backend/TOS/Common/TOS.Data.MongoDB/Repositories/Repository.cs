@@ -1,5 +1,5 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TOS.Common.MongoDB;
@@ -7,9 +7,9 @@ using TOS.Data.Repositories;
 
 namespace TOS.Data.MongoDB.Repositories
 {
-    public abstract class Repository<TModel> : IRepository<TModel, ObjectId>
+    public abstract class Repository<TModel> : IRepository<TModel, Guid>
         where TModel : IDocumentModel
-    {        
+    {
         private readonly IMongoDatabase _mongoDatabase;
         private readonly string _collectionName;
 
@@ -22,13 +22,13 @@ namespace TOS.Data.MongoDB.Repositories
         protected IMongoCollection<TModel> Collection => _mongoDatabase
                 .GetCollection<TModel>(_collectionName);
 
-        public virtual ObjectId Add(TModel model)
+        public virtual Guid Add(TModel model)
         {
             Collection.InsertOne(model);
             return model.Id;
         }
 
-        public virtual async Task<ObjectId> AddAsync(TModel model)
+        public virtual async Task<Guid> AddAsync(TModel model)
         {
             await Collection.InsertOneAsync(model);
             return model.Id;
@@ -44,22 +44,22 @@ namespace TOS.Data.MongoDB.Repositories
             await Collection.InsertManyAsync(models);
         }
 
-        public virtual bool Delete(ObjectId id)
+        public virtual bool Delete(Guid id)
         {
             return Collection.DeleteOne(m => m.Id == id).DeletedCount == 1;
         }
 
-        public virtual async Task<bool> DeleteAsync(ObjectId id)
+        public virtual async Task<bool> DeleteAsync(Guid id)
         {
             return (await Collection.DeleteOneAsync(m => m.Id == id)).DeletedCount == 1;
         }
 
-        public virtual TModel GetById(ObjectId id)
+        public virtual TModel GetById(Guid id)
         {
             return Collection.Find(m => m.Id == id).FirstOrDefault();
         }
 
-        public virtual async Task<TModel> GetByIdAsync(ObjectId id)
+        public virtual async Task<TModel> GetByIdAsync(Guid id)
         {
             return await Collection.Find(m => m.Id == id).FirstOrDefaultAsync();
         }

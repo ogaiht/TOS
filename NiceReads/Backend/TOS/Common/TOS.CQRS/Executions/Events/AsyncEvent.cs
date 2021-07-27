@@ -4,9 +4,9 @@ namespace TOS.CQRS.Executions.Events
 {
     public abstract class AsyncEvent : IAsyncEvent
     {
-        protected AsyncEvent(Guid id, DateTime timestamp)
+        protected AsyncEvent(Guid executionId, DateTime timestamp)
         {
-            Id = id;
+            ExecutionId = executionId;
             Timestamp = timestamp;
         }
 
@@ -16,7 +16,7 @@ namespace TOS.CQRS.Executions.Events
 
         }
 
-        public Guid Id { get; }
+        public Guid ExecutionId { get; }
 
         public DateTime Timestamp { get; }
     }

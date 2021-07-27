@@ -2,9 +2,8 @@
 
 namespace TOS.CQRS.Executions.Events
 {
-    public interface IAsyncEvent
+    public interface IAsyncEvent : IAsyncExecutionRequest
     {
-        Guid Id { get; }
         DateTime Timestamp { get; }
     }
 }

@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\TOS.Common.DataModel\TOS.Common.DataModel.csproj" />
+    <ProjectReference Include="..\..\Common\TOS.Common.MongoDB\TOS.Common.MongoDB.csproj" />
+    <ProjectReference Include="..\..\Common\TOS.Common\TOS.Common.csproj" />
+    <ProjectReference Include="..\..\Common\TOS.Data.MongoDB\TOS.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\Common\TOS.Data\TOS.Data.csproj" />
+    <ProjectReference Include="..\TOS.EngagementHub.Models\TOS.EngagementHub.Models.csproj" />
+  </ItemGroup>
+
+</Project>

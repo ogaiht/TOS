@@ -1,23 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TOS.CQRS.Executions.Events;
+using TOS.CQRS.Handlers;
 using TOS.CQRS.Handlers.Events;
 
 namespace TOS.CQRS.Dispatchers.Events
 {
     public class EventDispatcher : IEventDispatcher
     {
-        private readonly IExecutionHandlerProvider _dispatcherProvider;
+        private readonly IHandlerExecutor _handlerExecutor;
+        private readonly IExecutionHandlerProvider _executionHandlerProvider;
+        private readonly ILogger<EventDispatcher> _logger;
 
-        public EventDispatcher(IExecutionHandlerProvider dispatcherProvider)
+        public EventDispatcher(
+            IHandlerExecutor handlerExecutor,
+            IExecutionHandlerProvider executionHandlerProvider,
+            ILogger<EventDispatcher> logger)
         {
-            _dispatcherProvider = dispatcherProvider;
+            _handlerExecutor = handlerExecutor;
+            _executionHandlerProvider = executionHandlerProvider;
+            _logger = logger;
         }
 
         public void Dispatch<TEvent>(TEvent @event) where TEvent : IEvent
         {
-            IEnumerable<IEventHandler<TEvent>> handlers = _dispatcherProvider.GetHandlersFor<IEventHandler<TEvent>>(false);
+            IEnumerable<IEventHandler<TEvent>> handlers = _executionHandlerProvider.GetHandlersFor<IEventHandler<TEvent>>(false);
 
             if (!handlers.Any())
             {
@@ -26,13 +36,21 @@ namespace TOS.CQRS.Dispatchers.Events
 
             foreach (IEventHandler<TEvent> handler in handlers)
             {
-                handler.Execute(@event);
+                try
+                {
+                    _handlerExecutor.Execute(handler, @event);
+                }
+                catch (Exception ex)
+                {
+                    LogError<TEvent>(ex, handler);
+                    throw;
+                }
             }
         }
 
         public async Task DispatchAsync<TEvent>(TEvent @event) where TEvent : IAsyncEvent
         {
-            IEnumerable<IAsyncEventHandler<TEvent>> handlers = _dispatcherProvider.GetHandlersFor<IAsyncEventHandler<TEvent>>(false);
+            IEnumerable<IAsyncEventHandler<TEvent>> handlers = _executionHandlerProvider.GetHandlersFor<IAsyncEventHandler<TEvent>>(false);
 
             if (!handlers.Any())
             {
@@ -41,8 +59,21 @@ namespace TOS.CQRS.Dispatchers.Events
 
             foreach (IAsyncEventHandler<TEvent> handler in handlers)
             {
-                await handler.ExecuteAsync(@event);
+                try
+                {
+                    await _handlerExecutor.ExecuteAsync(handler, @event);
+                }
+                catch (Exception ex)
+                {
+                    LogError<TEvent>(ex, handler);
+                    throw;
+                }
             }
+        }
+
+        private void LogError<T>(Exception ex, object handler)
+        {
+            _logger.LogError(ex, "Error when executing {Event} by handler {Handler}.", typeof(T).FullName, handler.GetType().FullName);
         }
     }
 }

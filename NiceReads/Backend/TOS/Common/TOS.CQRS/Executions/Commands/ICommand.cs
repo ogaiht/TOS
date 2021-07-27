@@ -1,6 +1,4 @@
-﻿using TOS.CQRS.Executions;
-
-namespace TOS.CQRS.Commands
+﻿namespace TOS.CQRS.Executions.Commands
 {
     public interface ICommand : IExecutionRequest
     {

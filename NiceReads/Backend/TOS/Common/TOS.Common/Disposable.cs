@@ -20,6 +20,6 @@ namespace TOS.Common
             GC.SuppressFinalize(this);
         }
 
-        protected abstract void Dispose(bool disposing);        
+        protected abstract void Dispose(bool disposing);
     }
 }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard2.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -9,8 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\TOS.Common.DataModel\TOS.Common.DataModel.csproj" />
     <ProjectReference Include="..\..\Common\TOS.Data.MongoDB\TOS.Data.MongoDB.csproj" />
     <ProjectReference Include="..\..\Common\TOS.Data\TOS.Data.csproj" />
+    <ProjectReference Include="..\..\EngagementHub\TOS.EngagementHub.Models\TOS.EngagementHub.Models.csproj" />
     <ProjectReference Include="..\TOS.NiceReads.Models\TOS.NiceReads.Models.csproj" />
   </ItemGroup>
 

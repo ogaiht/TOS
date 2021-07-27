@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
-using TOS.CQRS.Commands;
 using TOS.CQRS.Executions.Commands;
 using TOS.CQRS.Handlers;
 using TOS.CQRS.Handlers.Commands;
@@ -45,7 +44,7 @@ namespace TOS.CQRS.Dispatchers.Commands
             ICommandHandler<TCommand, TResult> handler = _executionHandlerProvider.GetHandlerFor<ICommandHandler<TCommand, TResult>>();
             try
             {
-                return _handlerExecutor.Execute<TCommand, TResult, ICommandHandler<TCommand, TResult>>(handler, command);
+                return _handlerExecutor.Execute<TCommand, ICommandHandler<TCommand, TResult>, TResult>(handler, command);
             }
             catch (Exception ex)
             {
@@ -77,7 +76,7 @@ namespace TOS.CQRS.Dispatchers.Commands
             IAsyncCommandHandler<TAsyncCommand, TResult> handler = _executionHandlerProvider.GetHandlerFor<IAsyncCommandHandler<TAsyncCommand, TResult>>();
             try
             {
-                return await _handlerExecutor.ExecuteAsync<TAsyncCommand, TResult, IAsyncCommandHandler<TAsyncCommand, TResult>>(handler, asyncCommand);
+                return await _handlerExecutor.ExecuteAsync<TAsyncCommand, IAsyncCommandHandler<TAsyncCommand, TResult>, TResult>(handler, asyncCommand);
             }
             catch (Exception ex)
             {
@@ -88,7 +87,7 @@ namespace TOS.CQRS.Dispatchers.Commands
 
         private void LogError<T>(Exception ex, object handler)
         {
-            _logger.LogError(ex, "Error when execution {Command} by handler {Handler}.", typeof(T).FullName, handler.GetType().FullName);
+            _logger.LogError(ex, "Error when executing {Command} by handler {Handler}.", typeof(T).FullName, handler.GetType().FullName);
         }
     }
 }

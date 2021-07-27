@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TOS.Common.Configuration;
 using TOS.Common.Security.Tokens.Factories;
+using TOS.Common.Security.Tokens.Utils;
 
 namespace TOS.Common.Security.Tokens
 {
@@ -11,11 +12,12 @@ namespace TOS.Common.Security.Tokens
         {
             ISecurityConfig securityConfig = configuration.GetConfig<TokenSecurityConfig>();
             return services
-                .AddSingleton(securityConfig)                
+                .AddSingleton(securityConfig)
                 .AddTransient<ISecurityTokenCreator, JwtSecurityTokenCreator>()
                 .AddTransient<IEncryptingCredentialsFactory, EncryptingCredentialsFactory>()
                 .AddTransient<ISigningCredentialsFactory, SigningCredentialsFactory>()
-                .AddTransient<ISymmetricSecurityKeyFactory, SymmetricSecurityKeyFactory>();
-        }       
+                .AddTransient<ISymmetricSecurityKeyFactory, SymmetricSecurityKeyFactory>()
+                .AddTransient<ITokenTimerProvider, TokeTimerProvider>();
+        }
     }
 }

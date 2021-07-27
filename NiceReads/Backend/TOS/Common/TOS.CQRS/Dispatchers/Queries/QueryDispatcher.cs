@@ -27,7 +27,7 @@ namespace TOS.CQRS.Dispatchers.Queries
             IQueryHandler<TQuery, TResult> handler = _executionHandlerProvider.GetHandlerFor<IQueryHandler<TQuery, TResult>>();
             try
             {
-                return _handlerExecutor.Execute<TQuery, TResult, IQueryHandler<TQuery, TResult>>(handler, query);
+                return _handlerExecutor.Execute<TQuery, IQueryHandler<TQuery, TResult>, TResult>(handler, query);
             }
             catch (Exception ex)
             {
@@ -41,7 +41,7 @@ namespace TOS.CQRS.Dispatchers.Queries
             IAsyncQueryHandler<TQuery, TResult> handler = _executionHandlerProvider.GetHandlerFor<IAsyncQueryHandler<TQuery, TResult>>();
             try
             {
-                return await _handlerExecutor.ExecuteAsync<TQuery, TResult, IAsyncQueryHandler<TQuery, TResult>>(handler, query);
+                return await _handlerExecutor.ExecuteAsync<TQuery, IAsyncQueryHandler<TQuery, TResult>, TResult>(handler, query);
             }
             catch (Exception ex)
             {

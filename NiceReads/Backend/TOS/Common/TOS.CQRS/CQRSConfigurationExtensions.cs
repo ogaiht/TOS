@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using TOS.CQRS.Commands;
 using TOS.CQRS.Dispatchers;
 using TOS.CQRS.Dispatchers.Commands;
 using TOS.CQRS.Dispatchers.Events;
@@ -11,6 +10,7 @@ using TOS.CQRS.Handlers;
 using TOS.CQRS.Handlers.Commands;
 using TOS.CQRS.Handlers.Events;
 using TOS.CQRS.Handlers.Queries;
+using TOS.CQRS.Logging;
 
 namespace TOS.CQRS
 {
@@ -23,7 +23,9 @@ namespace TOS.CQRS
                 .AddTransient<ICommandDispatcher, CommandDispatcher>()
                 .AddTransient<IQueryDispatcher, QueryDispatcher>()
                 .AddTransient<IEventDispatcher, EventDispatcher>()
-                .AddTransient<IHandlerExecutor, HandlerExecutor>();
+                .AddTransient<IHandlerExecutor, HandlerExecutor>()
+                .AddTransient<IHandlerExecutorIdGenerator, HandlerExecutorIdGenerator>()
+                .AddTransient<IHandlerExecutorLogger, HandlerExecutorLogger>();
             return services;
         }
 

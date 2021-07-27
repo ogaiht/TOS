@@ -1,5 +1,4 @@
 ﻿using System;
-using TOS.CQRS.Commands;
 
 namespace TOS.CQRS.Executions.Commands
 {
