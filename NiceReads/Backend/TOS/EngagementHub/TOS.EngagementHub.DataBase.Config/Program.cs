@@ -11,7 +11,7 @@ namespace TOS.EngagementHub.DataBase.Config
 
             IDatabaseUpdater databaseUpdater = UpdaterBuilder.CreateUpdater();
             await databaseUpdater.UpdateAsync();
-            Console.WriteLine("Updated finished.");
+            Console.WriteLine("Update finished.");
             Console.ReadLine();
         }
     }

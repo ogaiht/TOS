@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using TOS.Common.DataModel;
 using TOS.CQRS.Executions.Queries;
 using TOS.EngagementHub.Models.Filters;
 using TOS.EngagementHub.Models.Projections;
 
 namespace TOS.EngagementHub.Application.Queries.Employees
 {
-    public class GetEmployeesByFilterAsyncQuery : AsyncQuery<IReadOnlyCollection<EmployeeDetail>>
+    public class GetEmployeesByFilterAsyncQuery : AsyncQuery<IPagedResult<EmployeeDetail>>
     {
         public GetEmployeesByFilterAsyncQuery(EmployeeFilter filter)
         {

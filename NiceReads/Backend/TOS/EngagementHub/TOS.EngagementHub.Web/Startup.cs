@@ -45,6 +45,8 @@ namespace TOS.EngagementHub.Web
 
             app.UseAuthorization();
 
+            app.UseCors(b => b.AllowAnyOrigin());
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

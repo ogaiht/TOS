@@ -1,0 +1,13 @@
+<div class="container" *ngIf="employees$ | async; let employees">
+    <input type="text" (change)="onNameSearchChange($event)" />
+    <div class="row mb-3">
+        <div class="col-4 themed-grid-col">First Name</div>
+        <div class="col-4 themed-grid-col">Middle Name</div>
+        <div class="col-4 themed-grid-col">Last Name</div>
+    </div>
+    <div class="row mb-3" *ngFor="let employee of employees.items">
+        <div class="col-4 themed-grid-col"> {{ employee.name.firstName }}</div>
+        <div class="col-4 themed-grid-col"> {{ employee.name.middleName }}</div>
+        <div class="col-4 themed-grid-col"> {{ employee.name.lastName }}</div>
+    </div>
+</div>

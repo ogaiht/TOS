@@ -17,8 +17,7 @@ namespace TOS.EngagementHub.Data.Queries.SkillLevels
 
         public async Task<IReadOnlyCollection<SkillLevel>> GetSkillLevelsAsync()
         {
-            IAsyncCursor<SkillLevel> cursor = await _mongoCollectionProvider.GetCollection<SkillLevel>().FindAsync(s => true);
-            return await cursor.ToListAsync();
+            return await _mongoCollectionProvider.GetCollection<SkillLevel>().Find(s => true).ToListAsync();
         }
     }
 }

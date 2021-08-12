@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TOS.Common.DataModel;
 using TOS.CQRS.Dispatchers.Commands;
 using TOS.CQRS.Dispatchers.Queries;
 using TOS.EngagementHub.Application.Commands.Employees;
@@ -47,14 +47,14 @@ namespace TOS.EngagementHub.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(string name)
+        public async Task<IActionResult> Get(string name = "", int offset = -1, int limit = -1)
         {
             try
             {
-                IReadOnlyCollection<EmployeeDetail> employees = await QueryDispatcher
-                    .ExecuteAsync<GetEmployeesByFilterAsyncQuery, IReadOnlyCollection<EmployeeDetail>>(
-                    new GetEmployeesByFilterAsyncQuery(new EmployeeFilter(name)));
-                return Ok(new FoundResponseModel<IReadOnlyCollection<EmployeeDetail>>(employees));
+                IPagedResult<EmployeeDetail> employees = await QueryDispatcher
+                    .ExecuteAsync<GetEmployeesByFilterAsyncQuery, IPagedResult<EmployeeDetail>>(
+                    new GetEmployeesByFilterAsyncQuery(new EmployeeFilter(name, offset, limit)));
+                return Ok(new FoundResponseModel<IPagedResult<EmployeeDetail>>(employees));
             }
             catch (Exception ex)
             {
@@ -63,17 +63,32 @@ namespace TOS.EngagementHub.Web.Controllers
             }
         }
 
+        [HttpDelete("{employeeId:Guid}")]
+        public async Task<IActionResult> Delete(Guid employeeId)
+        {
+            try
+            {
+                await CommandDispatcher.ExecuteAsync(new DeleteEmployeeAsyncCommand(employeeId));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, $"Error when deleting Employee with id '{employeeId}'.");
+                throw;
+            }
+        }
+
         [HttpPost("{employeeId}/skills")]
         public async Task<IActionResult> AddSkills(Guid employeeId, SkillLevelItem[] skillLevels)
         {
-            EmployeeSkill[] employeeSkills = skillLevels.Select(l => new EmployeeSkill()
-            {
-                SkillId = l.SkillId,
-                LevelId = l.LevelId
-            }).ToArray();
-            AddSkillsToEmployeeAsyncCommand command = new AddSkillsToEmployeeAsyncCommand(employeeId, employeeSkills);
             try
             {
+                EmployeeSkill[] employeeSkills = skillLevels.Select(l => new EmployeeSkill()
+                {
+                    SkillId = l.SkillId,
+                    LevelId = l.LevelId
+                }).ToArray();
+                AddSkillsToEmployeeAsyncCommand command = new AddSkillsToEmployeeAsyncCommand(employeeId, employeeSkills);
                 await CommandDispatcher.ExecuteAsync(command);
                 return Ok();
             }
@@ -81,6 +96,23 @@ namespace TOS.EngagementHub.Web.Controllers
             {
                 Logger.LogError(ex, "Error when adding skills to Employee.");
                 throw;
+            }
+        }
+
+        [HttpDelete("{employeeId}/skills")]
+        public async Task<IActionResult> DeleteSkills(Guid employeeId, Guid[] skillIds)
+        {
+            try
+            {
+                RemoveSkillsFromEmployeeAsyncCommand command = new RemoveSkillsFromEmployeeAsyncCommand(employeeId, skillIds);
+                await CommandDispatcher.ExecuteAsync(command);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error when delete skills from Employee.");
+                throw;
+
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TOS.Common.Collections
 {
@@ -11,6 +12,20 @@ namespace TOS.Common.Collections
             {
                 action(item);
             }
+        }
+
+        public static IReadOnlyCollection<TItem> Remove<TItem>(this ICollection<TItem> collection, Predicate<TItem> predicate)
+        {
+            List<TItem> removedItems = new List<TItem>();
+            foreach (TItem item in collection.ToArray())
+            {
+                if (predicate(item))
+                {
+                    collection.Remove(item);
+                    removedItems.Add(item);
+                }
+            }
+            return removedItems.ToArray();
         }
     }
 }

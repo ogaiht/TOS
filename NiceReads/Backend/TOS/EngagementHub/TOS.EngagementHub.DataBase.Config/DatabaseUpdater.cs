@@ -29,10 +29,20 @@ namespace TOS.EngagementHub.DataBase.Config
         public async Task UpdateAsync()
         {
             IReadOnlyCollection<Type> indexerTypes = LoadIndexers();
+            Console.WriteLine("{0} indexers found.", indexerTypes.Count);
             foreach (Type indexerType in indexerTypes)
             {
                 IIndexer indexer = (IIndexer)Activator.CreateInstance(indexerType);
-                await indexer.ExecuteAsync(_mongoCollectionProvider);
+                try
+                {
+                    Console.WriteLine("Executing '{0}'", indexerType.Name);
+                    await indexer.ExecuteAsync(_mongoCollectionProvider);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error when executing indexer '{0}'. Error message: '{1}'.", indexerType.Name, ex.Message);
+                    throw;
+                }
             }
         }
     }

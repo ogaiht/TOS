@@ -2,16 +2,20 @@
 
 namespace TOS.Common.DataModel
 {
-    public class PagedResult<T> : IPagedResult<T>
+    public class PagedResult<TResult> : IPagedResult<TResult>
     {
-        public PagedResult(IReadOnlyCollection<T> items, long total)
+        public PagedResult(IReadOnlyCollection<TResult> items, long total, int offset, int limit)
         {
             Items = items;
             Total = total;
+            Offset = offset;
+            Limit = limit;
         }
 
-        public IReadOnlyCollection<T> Items { get; }
+        public IReadOnlyCollection<TResult> Items { get; }
 
         public long Total { get; }
+        public int Offset { get; }
+        public int Limit { get; }
     }
 }

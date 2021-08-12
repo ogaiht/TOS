@@ -1,13 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
+using TOS.Common.DataModel;
 using TOS.CQRS.Dispatchers.Commands;
 using TOS.CQRS.Dispatchers.Queries;
 using TOS.EngagementHub.Application.Commands.Skills;
 using TOS.EngagementHub.Application.Queries.Skills;
 using TOS.EngagementHub.Models;
+using TOS.EngagementHub.Models.Filters;
 using TOS.EngagementHub.Web.Models;
 
 namespace TOS.EngagementHub.Web.Controllers
@@ -55,12 +56,12 @@ namespace TOS.EngagementHub.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get(string name)
+        public async Task<IActionResult> Get(string name = "", int offset = -1, int limit = -1)
         {
             try
             {
-                IReadOnlyCollection<Skill> skills = await QueryDispatcher.ExecuteAsync<GetSkillsByNameAsyncQuery, IReadOnlyCollection<Skill>>(new GetSkillsByNameAsyncQuery(name));
-                return Ok(new FoundResponseModel<IReadOnlyCollection<Skill>>(skills));
+                IPagedResult<Skill> skills = await QueryDispatcher.ExecuteAsync<GetSkillsByNameAsyncQuery, IPagedResult<Skill>>(new GetSkillsByNameAsyncQuery(new SkillFilter(name, offset, limit)));
+                return Ok(new FoundResponseModel<IPagedResult<Skill>>(skills));
             }
             catch (Exception ex)
             {

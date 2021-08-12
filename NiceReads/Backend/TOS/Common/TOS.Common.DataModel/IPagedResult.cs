@@ -6,5 +6,7 @@ namespace TOS.Common.DataModel
     {
         IReadOnlyCollection<T> Items { get; }
         long Total { get; }
+        int Offset { get; }
+        int Limit { get; }
     }
 }
