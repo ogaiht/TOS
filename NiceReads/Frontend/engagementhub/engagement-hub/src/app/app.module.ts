@@ -14,16 +14,20 @@ import { ApiService } from './utils/ApiService';
 import { URLBuilder } from './utils/URLBuilder';
 import { SkillListComponent } from './components/skills/skill-list/skill-list.component';
 import { SkillService } from './services/skill.service';
+import { SkillComponent } from './components/skills/skill/skill.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
     AppComponent,
     EmployeeListComponent,
-    SkillListComponent
+    SkillListComponent,
+    SkillComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
+    ReactiveFormsModule,
     EffectsModule.forRoot(EFFECTS),
     StoreModule.forRoot(REDUCERS)
   ],

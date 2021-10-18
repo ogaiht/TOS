@@ -1,0 +1,14 @@
+export type AbstractComponent<T> = Function & { prototype: T };
+export type Constr<T> = {new (...args: any[]): T};
+export type constr<T> = AbstractComponent<T> | Constr<T> | GetArrayReturnType<T>;
+export type Undefinable<T> = T | undefined;
+export type Nullable<T> = T | null | undefined;
+export type NullOrUndefined = null | undefined;
+export type Predicate<T> = (item: T) => boolean;
+export type Func<TOupt> = () => TOupt;
+export type Func1<TInput, TOupt> = (input: TInput) => TOupt;
+export type Funct2<TInput1, TInput2, TOuput> = (input1: TInput1, input2: TInput2) => TOuput;
+export type Action = () => void;
+export type Action1<TInput> = (input: TInput) => void;
+export type Action2<TInput1, TInput2> = (input1: TInput1, input2: TInput2) => void;
+export type GetArrayReturnType<T> = T extends () => (infer U)[] ? U : never;

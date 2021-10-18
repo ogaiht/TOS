@@ -1,0 +1,32 @@
+{
+  "name": "tos-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.ts",
+  "scripts": {
+    "start": "nodemon --exec ts-node src/server.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.10.3",
+    "graphql-import-node": "^0.0.4",
+    "graphql-tools": "^8.2.0",
+    "nodemon": "^2.0.13",
+    "ts-node": "^10.2.1",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {
+    "apollo-server-express": "^3.3.0",
+    "class-validator": "^0.13.1",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "graphql": "^15.6.1",
+    "inversify": "^5.1.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  }
+}

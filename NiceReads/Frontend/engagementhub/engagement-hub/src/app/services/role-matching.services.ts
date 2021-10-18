@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { PagedResult } from '../models/filter';
 import { RoleFilter } from '../models/role-filter';
 import { Role } from '../models/role.model';
-import { EngagementHubApiService } from './employee.service';
+import { EngagementHubApiService } from './engagement-hub-api.service';
 import * as URI from './route-uris';
 
 @Injectable()
