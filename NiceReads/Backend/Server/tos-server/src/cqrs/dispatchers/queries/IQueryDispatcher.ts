@@ -1,5 +1,5 @@
-import { IAsyncQuery } from '../../executions/queries/async.query';
-import { IQuery } from '../../executions/queries/query';
+import { IAsyncQuery } from '../../executions/queries/IAsyncQuery';
+import { IQuery } from '../../executions/queries/IQuery';
 
 export interface IQueryDispatcher {
     execute<TQuery extends IQuery<TResult>, TResult>(query: TQuery): TResult;

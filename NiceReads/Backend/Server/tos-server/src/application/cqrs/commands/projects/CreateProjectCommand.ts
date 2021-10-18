@@ -1,4 +1,4 @@
-import { CommandWithResult } from '../../../../cqrs/executions/commands/commands';
+import { CommandWithResult } from '../../../../cqrs/executions/commands/CommandWithResult';
 import { ProjectData } from '../../../../data/data';
 import { AddProjectInput } from '../../../schemas/add-project-input';
 

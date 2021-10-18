@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { AsyncCommandWithResult } from '../../executions/commands/async.command';
+import { AsyncCommandWithResult } from '../../executions/commands/AsyncCommandWithResult';
 import { AsyncExecutionHandlerWithResult } from '../AsyncExecutionHandlerWithResult';
 import { IAsyncCommandWithResultHandler } from './IAsyncCommandWithResultHandler';
 

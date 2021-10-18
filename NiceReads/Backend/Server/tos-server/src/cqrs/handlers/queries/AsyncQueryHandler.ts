@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { AsyncQuery } from '../../executions/queries/async.query';
+import { AsyncQuery } from '../../executions/queries/AsyncQuery';
 import { AsyncExecutionHandlerWithResult } from '../AsyncExecutionHandlerWithResult';
 import { IAsyncQueryHandler } from './IAsyncQueryHandler';
 

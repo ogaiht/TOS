@@ -1,4 +1,5 @@
-import { IExecutionRequest, IExecutionRequestWitResult } from '../executions/execution.request';
+import { IExecutionRequest } from '../executions/IExecutionRequest';
+import { IExecutionRequestWitResult } from '../executions/IExecutionRequestWitResult';
 import { IExecutionHandler } from '../handlers/IExecutionHandler';
 import { IExecutionHandlerWithResult } from '../handlers/IExecutionHandlerWithResult';
 

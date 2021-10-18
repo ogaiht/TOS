@@ -1,4 +1,4 @@
-import { AsyncCommandWithResult } from '../../../../cqrs/executions/commands/async.command';
+import { AsyncCommandWithResult } from '../../../../cqrs/executions/commands/AsyncCommandWithResult';
 import { TaskData } from '../../../../data/data';
 
 export class CompleteTaskAsyncCommand extends AsyncCommandWithResult<TaskData> {

@@ -1,4 +1,7 @@
-import { IAsyncExecutionRequest, IAsyncExecutionRequestWithResult, IExecutionRequest, IExecutionRequestWitResult } from '../executions/execution.request';
+import { IAsyncExecutionRequest } from '../executions/IAsyncExecutionRequest';
+import { IAsyncExecutionRequestWithResult } from '../executions/IAsyncExecutionRequestWithResult';
+import { IExecutionRequest } from '../executions/IExecutionRequest';
+import { IExecutionRequestWitResult } from '../executions/IExecutionRequestWitResult';
 import { IAsyncExecutionHandler } from './IAsyncExecutionHandler';
 import { IAsyncExecutionHandlerWithResult } from './IAsyncExecutionHandlerWithResult';
 import { IExecutionHandler } from './IExecutionHandler';

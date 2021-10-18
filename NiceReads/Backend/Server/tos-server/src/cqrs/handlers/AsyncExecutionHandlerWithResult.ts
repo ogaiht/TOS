@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { AsyncExecutionRequestWithResult } from '../executions/execution.request';
+import { AsyncExecutionRequestWithResult } from '../executions/AsyncExecutionRequestWithResult';
 
 @injectable()
 export abstract class AsyncExecutionHandlerWithResult<TExecution extends AsyncExecutionRequestWithResult<TResult>, TResult> {

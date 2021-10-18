@@ -1,5 +1,7 @@
-import { IAsyncCommand, IAsyncCommandWithResult } from '../../executions/commands/async.command';
-import { ICommand, ICommandWithResult } from '../../executions/commands/commands';
+import { IAsyncCommand } from '../../executions/commands/IAsyncCommand';
+import { IAsyncCommandWithResult } from '../../executions/commands/IAsyncCommandWithResult';
+import { ICommand } from '../../executions/commands/ICommand';
+import { ICommandWithResult } from '../../executions/commands/ICommandWithResult';
 
 export interface ICommandDispatcher {
     execute<TCommand extends ICommand>(command: TCommand): void;

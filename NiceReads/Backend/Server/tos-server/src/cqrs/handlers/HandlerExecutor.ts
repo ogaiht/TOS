@@ -1,6 +1,9 @@
 import { inject, injectable } from 'inversify';
 import { Types } from '../../types';
-import { IAsyncExecutionRequest, IAsyncExecutionRequestWithResult, IExecutionRequest, IExecutionRequestWitResult } from '../executions/execution.request';
+import { IAsyncExecutionRequest } from '../executions/IAsyncExecutionRequest';
+import { IAsyncExecutionRequestWithResult } from '../executions/IAsyncExecutionRequestWithResult';
+import { IExecutionRequest } from '../executions/IExecutionRequest';
+import { IExecutionRequestWitResult } from '../executions/IExecutionRequestWitResult';
 import { IExecutionTimer } from '../logging/IExecutionTimer';
 import { IHandlerExecutorLogger } from '../logging/IHandlerExecutorLogger';
 import { IHandlerExecutorLoggerScope } from '../logging/IHandlerExecutorLoggerScope';

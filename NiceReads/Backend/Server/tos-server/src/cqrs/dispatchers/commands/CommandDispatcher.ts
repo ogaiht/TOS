@@ -1,7 +1,9 @@
 import { inject, injectable } from 'inversify';
 import { Types } from '../../../types';
-import { IAsyncCommand, IAsyncCommandWithResult } from '../../executions/commands/async.command';
-import { ICommand, ICommandWithResult } from '../../executions/commands/commands';
+import { IAsyncCommand } from '../../executions/commands/IAsyncCommand';
+import { IAsyncCommandWithResult } from '../../executions/commands/IAsyncCommandWithResult';
+import { ICommand } from '../../executions/commands/ICommand';
+import { ICommandWithResult } from '../../executions/commands/ICommandWithResult';
 import { IAsyncCommandHandler } from '../../handlers/commands/IAsyncCommandHandler';
 import { IAsyncCommandWithResultHandler } from '../../handlers/commands/IAsyncCommandWithResultHandler';
 import { ICommandHandler } from '../../handlers/commands/ICommandHandler';

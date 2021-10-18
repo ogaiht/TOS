@@ -1,5 +1,5 @@
 import { injectable } from 'inversify';
-import { Command } from '../../executions/commands/commands';
+import { Command } from '../../executions/commands/Command';
 import { ExecutionHandler } from '../ExecutionHandler';
 import { ICommandHandler } from './ICommandHandler';
 

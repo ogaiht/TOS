@@ -1,5 +1,8 @@
 import { injectable } from 'inversify';
-import { IAsyncExecutionRequest, IAsyncExecutionRequestWithResult, IExecutionRequest, IExecutionRequestWitResult } from '../executions/execution.request';
+import { IAsyncExecutionRequest } from '../executions/IAsyncExecutionRequest';
+import { IAsyncExecutionRequestWithResult } from '../executions/IAsyncExecutionRequestWithResult';
+import { IExecutionRequest } from '../executions/IExecutionRequest';
+import { IExecutionRequestWitResult } from '../executions/IExecutionRequestWitResult';
 import { IAsyncExecutionHandler } from '../handlers/IAsyncExecutionHandler';
 import { IAsyncExecutionHandlerWithResult } from '../handlers/IAsyncExecutionHandlerWithResult';
 import { IExecutionHandler } from '../handlers/IExecutionHandler';

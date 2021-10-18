@@ -1,7 +1,7 @@
 import { inject, injectable } from 'inversify';
 import { Types } from '../../../types';
-import { IAsyncQuery } from '../../executions/queries/async.query';
-import { IQuery } from '../../executions/queries/query';
+import { IAsyncQuery } from '../../executions/queries/IAsyncQuery';
+import { IQuery } from '../../executions/queries/IQuery';
 import { IHandlerExecutor } from '../../handlers/IHandlerExecutor';
 import { IAsyncQueryHandler } from '../../handlers/queries/IAsyncQueryHandler';
 import { IQueryHandler } from '../../handlers/queries/IQueryHandler';

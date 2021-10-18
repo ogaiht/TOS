@@ -1,4 +1,4 @@
-import { AsyncQuery } from '../../../../cqrs/executions/queries/async.query';
+import { AsyncQuery } from '../../../../cqrs/executions/queries/AsyncQuery';
 import { ProjectData } from '../../../../data/data';
 
 export class GetCountryByNameAsyncQuery extends AsyncQuery<ProjectData> {

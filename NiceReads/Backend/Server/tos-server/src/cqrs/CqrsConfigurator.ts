@@ -1,9 +1,11 @@
 import { Container } from 'inversify';
 import { Constr } from '../common/common.types';
-import { AsyncCommand, AsyncCommandWithResult } from './executions/commands/async.command';
-import { Command, CommandWithResult } from './executions/commands/commands';
-import { AsyncQuery } from './executions/queries/async.query';
-import { Query } from './executions/queries/query';
+import { AsyncCommand } from './executions/commands/AsyncCommand';
+import { AsyncCommandWithResult } from './executions/commands/AsyncCommandWithResult';
+import { Command } from './executions/commands/Command';
+import { CommandWithResult } from './executions/commands/CommandWithResult';
+import { AsyncQuery } from './executions/queries/AsyncQuery';
+import { Query } from './executions/queries/Query';
 import { AsyncCommandHandler } from './handlers/commands/AsyncCommandHandler';
 import { AsyncCommandWithResultHandler } from './handlers/commands/AsyncCommandWithResultHandler';
 import { CommandHandler } from './handlers/commands/CommandHandler';
