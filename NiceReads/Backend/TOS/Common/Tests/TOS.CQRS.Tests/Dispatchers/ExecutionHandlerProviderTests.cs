@@ -5,6 +5,8 @@ using System;
 using System.Collections.Generic;
 using TOS.Common.Utils;
 using TOS.CQRS.Dispatchers;
+using TOS.CQRS.Executions;
+using TOS.CQRS.Handlers;
 
 namespace TOS.CQRS.Tests.Dispatchers
 {
@@ -35,25 +37,25 @@ namespace TOS.CQRS.Tests.Dispatchers
         [TestCase(false, false)]
         public void GetHandlerFor_WhenFindingHandler_ShouldValidateForNotFound_AndReturnIfFound(bool serviceFound, bool throwIfNotFound)
         {
-            TestService1 expectedTestService = new TestService1();
+            TestHandler1 expectedTestHandler = new TestHandler1();
             if (serviceFound)
             {
                 _serviceProvider
-                .Setup(p => p.GetService(typeof(ITestService)))
-                .Returns(expectedTestService);
+                .Setup(p => p.GetService(typeof(ITestHandler)))
+                .Returns(expectedTestHandler);
             }
 
-            ITestService actualTestService = _executionHandlerProvider.GetHandlerFor<ITestService>(throwIfNotFound);
+            IExecutionHandler<IExecutionRequest> actualTestService = _executionHandlerProvider.GetHandler<IExecutionRequest, ITestHandler>(throwIfNotFound);
             if (serviceFound)
             {
-                Assert.AreEqual(expectedTestService, actualTestService);
+                Assert.AreEqual(expectedTestHandler, actualTestService);
             }
             else
             {
                 Assert.IsNull(actualTestService);
             }
             _exceptionHelper
-                .Verify(e => e.CheckInvalidOperationException(!serviceFound && throwIfNotFound, "No handler was found for " + typeof(ITestService).FullName));
+                .Verify(e => e.CheckInvalidOperationException(!serviceFound && throwIfNotFound, "No handler was found for " + typeof(ITestHandler).FullName));
         }
 
         [Test]
@@ -63,42 +65,48 @@ namespace TOS.CQRS.Tests.Dispatchers
         [TestCase(false, false)]
         public void GetHandlerFor_WhenFindingHandlers_ShouldValidateForNotFound_AndReturnIfFound(bool serviceFound, bool throwIfNotFound)
         {
-            TestService1 expectedTestService1 = new TestService1();
-            TestService2 expectedTestService2 = new TestService2();
+            TestHandler1 expectedTestHandler1 = new TestHandler1();
+            TestHandler2 expectedTestHandler2 = new TestHandler2();
             if (serviceFound)
             {
                 _serviceProvider
-                .Setup(p => p.GetService(typeof(IEnumerable<ITestService>)))
-                .Returns(new ITestService[] { expectedTestService1, expectedTestService2 });
+                .Setup(p => p.GetService(typeof(IEnumerable<ITestHandler>)))
+                .Returns(new ITestHandler[] { expectedTestHandler1, expectedTestHandler2 });
             }
 
             if (serviceFound)
             {
-                IEnumerable<ITestService> actualServices = _executionHandlerProvider.GetHandlersFor<ITestService>(throwIfNotFound);
-                CollectionAssert.Contains(actualServices, expectedTestService1);
-                CollectionAssert.Contains(actualServices, expectedTestService2);
+                IEnumerable<ITestHandler> actualServices = _executionHandlerProvider.GetHandlers<IExecutionRequest, ITestHandler>(throwIfNotFound);
+                CollectionAssert.Contains(actualServices, expectedTestHandler1);
+                CollectionAssert.Contains(actualServices, expectedTestHandler2);
                 _exceptionHelper
-                    .Verify(e => e.CheckInvalidOperationException(!serviceFound && throwIfNotFound, "No handler was found for " + typeof(ITestService).FullName));
+                    .Verify(e => e.CheckInvalidOperationException(!serviceFound && throwIfNotFound, "No handler was found for " + typeof(ITestHandler).FullName));
             }
             else
             {
-                Assert.Throws<InvalidOperationException>(() => _executionHandlerProvider.GetHandlersFor<ITestService>(throwIfNotFound), "No service for type 'System.Collections.Generic.IEnumerable`1[TOS.CQRS.Tests.Dispatchers.ITestService]' has been registered");
+                Assert.Throws<InvalidOperationException>(() => _executionHandlerProvider.GetHandlers<IExecutionRequest, ITestHandler>(throwIfNotFound), "No service for type 'System.Collections.Generic.IEnumerable`1[TOS.CQRS.Tests.Dispatchers.ITestService]' has been registered");
             }
         }
     }
 
-    public interface ITestService
+    public interface ITestHandler : IExecutionHandler<IExecutionRequest>
     {
 
     }
 
-    public class TestService1 : ITestService
+    public class TestHandler1 : ITestHandler
     {
-
+        public void Execute(IExecutionRequest execution)
+        {
+            throw new NotImplementedException();
+        }
     }
 
-    public class TestService2 : ITestService
+    public class TestHandler2 : ITestHandler
     {
-
+        public void Execute(IExecutionRequest execution)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

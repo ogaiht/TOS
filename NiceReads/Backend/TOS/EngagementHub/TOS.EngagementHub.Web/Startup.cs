@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using TOS.CaseChecker.Configuration;
 using TOS.EngagementHub.Configuration;
 
 namespace TOS.EngagementHub.Web
@@ -22,7 +23,8 @@ namespace TOS.EngagementHub.Web
         {
 
             services.AddControllers();
-            services.AddEngagementHub(this.Configuration);
+            services.AddEngagementHub(Configuration);
+            services.AddCaseChecker(Configuration);
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TOS.EngagementHub.Web", Version = "v1" });

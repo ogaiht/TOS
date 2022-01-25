@@ -9,11 +9,11 @@ namespace TOS.CQRS.Dispatchers.Queries
 {
     public class QueryDispatcher : IQueryDispatcher
     {
-        private readonly IHandlerExecutor _handlerExecutor;
+        private readonly IRequestExecutor _handlerExecutor;
         private readonly IExecutionHandlerProvider _executionHandlerProvider;
         private readonly ILogger<QueryDispatcher> _logger;
 
-        public QueryDispatcher(IHandlerExecutor handlerExecutor,
+        public QueryDispatcher(IRequestExecutor handlerExecutor,
             IExecutionHandlerProvider executionHandlerProvider,
             ILogger<QueryDispatcher> logger)
         {
@@ -24,10 +24,10 @@ namespace TOS.CQRS.Dispatchers.Queries
 
         public TResult Execute<TQuery, TResult>(TQuery query) where TQuery : IQuery<TResult>
         {
-            IQueryHandler<TQuery, TResult> handler = _executionHandlerProvider.GetHandlerFor<IQueryHandler<TQuery, TResult>>();
+            IQueryHandler<TQuery, TResult> handler = _executionHandlerProvider.GetHandler<TQuery, IQueryHandler<TQuery, TResult>, TResult>();
             try
             {
-                return _handlerExecutor.Execute<TQuery, IQueryHandler<TQuery, TResult>, TResult>(handler, query);
+                return _handlerExecutor.Execute<TQuery, IQueryHandler<TQuery, TResult>, TResult>(query, handler);
             }
             catch (Exception ex)
             {
@@ -36,16 +36,16 @@ namespace TOS.CQRS.Dispatchers.Queries
             }
         }
 
-        public async Task<TResult> ExecuteAsync<TQuery, TResult>(TQuery query) where TQuery : IAsyncQuery<TResult>
+        public async Task<TResult> ExecuteAsync<TAsyncQuery, TResult>(TAsyncQuery query) where TAsyncQuery : IAsyncQuery<TResult>
         {
-            IAsyncQueryHandler<TQuery, TResult> handler = _executionHandlerProvider.GetHandlerFor<IAsyncQueryHandler<TQuery, TResult>>();
+            IAsyncQueryHandler<TAsyncQuery, TResult> handler = _executionHandlerProvider.GetAsyncHandler<TAsyncQuery, IAsyncQueryHandler<TAsyncQuery, TResult>, TResult>();
             try
             {
-                return await _handlerExecutor.ExecuteAsync<TQuery, IAsyncQueryHandler<TQuery, TResult>, TResult>(handler, query);
+                return await _handlerExecutor.ExecuteAsync<TAsyncQuery, IAsyncQueryHandler<TAsyncQuery, TResult>, TResult>(query, handler);
             }
             catch (Exception ex)
             {
-                LogError<TQuery>(ex, handler);
+                LogError<TAsyncQuery>(ex, handler);
                 throw;
             }
         }

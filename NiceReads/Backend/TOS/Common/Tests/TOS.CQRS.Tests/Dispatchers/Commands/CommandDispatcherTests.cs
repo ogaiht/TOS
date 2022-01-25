@@ -15,14 +15,14 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
     public class CommandDispatcherTests
     {
         private CommandDispatcher _commandDispatcher;
-        private Mock<IHandlerExecutor> _handlerExecutor;
+        private Mock<IRequestExecutor> _handlerExecutor;
         private Mock<IExecutionHandlerProvider> _executionHandlerProvider;
         private Mock<ILogger<CommandDispatcher>> _logger;
 
         [SetUp]
         public void SetUp()
         {
-            _handlerExecutor = new Mock<IHandlerExecutor>();
+            _handlerExecutor = new Mock<IRequestExecutor>();
             _executionHandlerProvider = new Mock<IExecutionHandlerProvider>();
             _logger = new Mock<ILogger<CommandDispatcher>>();
             _commandDispatcher = new CommandDispatcher(
@@ -39,12 +39,12 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Mock<ICommandHandler<ICommand>> handler = new Mock<ICommandHandler<ICommand>>();
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<ICommandHandler<ICommand>>(true))
+                .Setup(p => p.GetHandler<ICommand, ICommandHandler<ICommand>>(true))
                 .Returns(handler.Object);
 
             _commandDispatcher.Execute(command.Object);
 
-            _handlerExecutor.Verify(e => e.Execute(handler.Object, command.Object));
+            _handlerExecutor.Verify(e => e.Execute(command.Object, handler.Object));
         }
 
 
@@ -57,16 +57,16 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Exception ex = new Exception();
 
             _handlerExecutor
-                .Setup(e => e.Execute(handler.Object, command.Object))
+                .Setup(e => e.Execute(command.Object, handler.Object))
                 .Throws(ex);
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<ICommandHandler<ICommand>>(true))
+                .Setup(p => p.GetHandler<ICommand, ICommandHandler<ICommand>>(true))
                 .Returns(handler.Object);
 
             Assert.Throws<Exception>(() => _commandDispatcher.Execute(command.Object));
 
-            _handlerExecutor.Verify(e => e.Execute(handler.Object, command.Object));
+            _handlerExecutor.Verify(e => e.Execute(command.Object, handler.Object));
         }
 
         [Test]
@@ -78,18 +78,18 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Mock<ICommandHandler<ICommand<string>, string>> handler = new Mock<ICommandHandler<ICommand<string>, string>>();
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<ICommandHandler<ICommand<string>, string>>(true))
+                .Setup(p => p.GetHandler<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(true))
                 .Returns(handler.Object);
 
             _handlerExecutor
-                .Setup(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(handler.Object, command.Object))
+                .Setup(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(command.Object, handler.Object))
                 .Returns(expectedResult);
 
             string actualResult = _commandDispatcher.Execute<ICommand<string>, string>(command.Object);
 
             Assert.AreEqual(expectedResult, actualResult);
 
-            _handlerExecutor.Verify(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(handler.Object, command.Object));
+            _handlerExecutor.Verify(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(command.Object, handler.Object));
         }
 
 
@@ -100,18 +100,18 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Mock<ICommandHandler<ICommand<string>, string>> handler = new Mock<ICommandHandler<ICommand<string>, string>>();
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<ICommandHandler<ICommand<string>, string>>(true))
+                .Setup(p => p.GetHandler<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(true))
                 .Returns(handler.Object);
 
             Exception ex = new Exception();
 
             _handlerExecutor
-                .Setup(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(handler.Object, command.Object))
+                .Setup(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(command.Object, handler.Object))
                 .Throws(ex);
 
             Assert.Throws<Exception>(() => _commandDispatcher.Execute<ICommand<string>, string>(command.Object));
 
-            _handlerExecutor.Verify(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(handler.Object, command.Object));
+            _handlerExecutor.Verify(e => e.Execute<ICommand<string>, ICommandHandler<ICommand<string>, string>, string>(command.Object, handler.Object));
         }
 
         [Test]
@@ -121,12 +121,12 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Mock<IAsyncCommandHandler<IAsyncCommand>> handler = new Mock<IAsyncCommandHandler<IAsyncCommand>>();
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<IAsyncCommandHandler<IAsyncCommand>>(true))
+                .Setup(p => p.GetAsyncHandler<IAsyncCommand, IAsyncCommandHandler<IAsyncCommand>>(true))
                 .Returns(handler.Object);
 
             await _commandDispatcher.ExecuteAsync(asyncCommand.Object);
 
-            _handlerExecutor.Verify(e => e.ExecuteAsync(handler.Object, asyncCommand.Object));
+            _handlerExecutor.Verify(e => e.ExecuteAsync(asyncCommand.Object, handler.Object));
         }
 
 
@@ -139,16 +139,16 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Exception ex = new Exception();
 
             _handlerExecutor
-                .Setup(e => e.ExecuteAsync(handler.Object, asyncCommand.Object))
+                .Setup(e => e.ExecuteAsync(asyncCommand.Object, handler.Object))
                 .ThrowsAsync(ex);
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<IAsyncCommandHandler<IAsyncCommand>>(true))
+                .Setup(p => p.GetAsyncHandler<IAsyncCommand, IAsyncCommandHandler<IAsyncCommand>>(true))
                 .Returns(handler.Object);
 
             Assert.ThrowsAsync<Exception>(() => _commandDispatcher.ExecuteAsync(asyncCommand.Object));
 
-            _handlerExecutor.Verify(e => e.ExecuteAsync(handler.Object, asyncCommand.Object));
+            _handlerExecutor.Verify(e => e.ExecuteAsync(asyncCommand.Object, handler.Object));
         }
 
         [Test]
@@ -160,18 +160,18 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Mock<IAsyncCommandHandler<IAsyncCommand<string>, string>> handler = new Mock<IAsyncCommandHandler<IAsyncCommand<string>, string>>();
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<IAsyncCommandHandler<IAsyncCommand<string>, string>>(true))
+                .Setup(p => p.GetAsyncHandler<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(true))
                 .Returns(handler.Object);
 
             _handlerExecutor
-                .Setup(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(handler.Object, command.Object))
+                .Setup(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(command.Object, handler.Object))
                 .ReturnsAsync(expectedResult);
 
             string actualResult = await _commandDispatcher.ExecuteAsync<IAsyncCommand<string>, string>(command.Object);
 
             Assert.AreEqual(expectedResult, actualResult);
 
-            _handlerExecutor.Verify(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(handler.Object, command.Object));
+            _handlerExecutor.Verify(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(command.Object, handler.Object));
         }
 
 
@@ -182,18 +182,18 @@ namespace TOS.CQRS.Tests.Dispatchers.Commands
             Mock<IAsyncCommandHandler<IAsyncCommand<string>, string>> handler = new Mock<IAsyncCommandHandler<IAsyncCommand<string>, string>>();
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlerFor<IAsyncCommandHandler<IAsyncCommand<string>, string>>(true))
+                .Setup(p => p.GetAsyncHandler<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(true))
                 .Returns(handler.Object);
 
             Exception ex = new Exception();
 
             _handlerExecutor
-               .Setup(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(handler.Object, command.Object))
+               .Setup(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(command.Object, handler.Object))
                .Throws(ex);
 
             Assert.ThrowsAsync<Exception>(async () => await _commandDispatcher.ExecuteAsync<IAsyncCommand<string>, string>(command.Object));
 
-            _handlerExecutor.Verify(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(handler.Object, command.Object));
+            _handlerExecutor.Verify(e => e.ExecuteAsync<IAsyncCommand<string>, IAsyncCommandHandler<IAsyncCommand<string>, string>, string>(command.Object, handler.Object));
         }
     }
 }

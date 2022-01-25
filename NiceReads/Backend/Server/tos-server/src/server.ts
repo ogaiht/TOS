@@ -13,7 +13,6 @@ import { CityResolver } from './application/resolvers/CityResolver';
 
 async function main() {
 
-    //const id = container.id;
     initData();
 
     const app = express();
@@ -38,7 +37,7 @@ async function main() {
     server.applyMiddleware({ app, path: '/graphql' });
 
     app.listen({ port: 8000 }, () => {
-        console.log('Apollo Server runnint on ');
+        console.log('Apollo Server running on ');
     });
 }
 

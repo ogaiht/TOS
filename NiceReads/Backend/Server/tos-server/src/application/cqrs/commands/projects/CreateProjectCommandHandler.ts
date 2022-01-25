@@ -19,7 +19,7 @@ export class CreateProjectCommandHandler implements CommandWithResultHandler<Cre
 
         if (command.project.tasks && command.project.tasks.length > 0) {
             for (const newTask of command.project.tasks) {
-                this.taskRepository.add(new TaskData(newTask.title, false, projectId));
+                this.taskRepository.add(new TaskData(newTask.title, projectId));
             }
         }
         return projectData;

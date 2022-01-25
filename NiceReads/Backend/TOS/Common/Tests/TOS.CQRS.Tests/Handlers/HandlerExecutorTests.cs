@@ -12,13 +12,13 @@ namespace TOS.CQRS.Tests.Handlers
     public class HandlerExecutorTests
     {
         private Mock<IHandlerExecutorLogger> _handlerExecutorLogger;
-        private HandlerExecutor _handlerExecutor;
+        private RequestExecutor _handlerExecutor;
 
         [SetUp]
         public void SetUp()
         {
             _handlerExecutorLogger = new Mock<IHandlerExecutorLogger>();
-            _handlerExecutor = new HandlerExecutor(_handlerExecutorLogger.Object);
+            _handlerExecutor = new RequestExecutor(_handlerExecutorLogger.Object);
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Returns(logScope.Object);
 
 
-            _handlerExecutor.Execute(handler.Object, request);
+            _handlerExecutor.Execute(request, handler.Object);
             handler.Verify(h => h.Execute(request), Times.Once);
             _handlerExecutorLogger.Verify(l => l.CreateScope(request, handler.Object), Times.Once);
             logScope.Verify(l => l.BeforeExecution(), Times.Once);
@@ -57,7 +57,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Setup(h => h.Execute(request))
                 .Throws(exception);
 
-            Assert.Throws<ExecutionTestException>(() => _handlerExecutor.Execute(handler.Object, request));
+            Assert.Throws<ExecutionTestException>(() => _handlerExecutor.Execute(request, handler.Object));
 
             handler.Verify(h => h.Execute(request), Times.Once);
             _handlerExecutorLogger.Verify(l => l.CreateScope(request, handler.Object), Times.Once);
@@ -86,7 +86,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Returns(logScope.Object);
 
 
-            string result = _handlerExecutor.Execute<TestRequestWithReturn, IExecutionHandler<TestRequestWithReturn, string>, string>(handler.Object, request);
+            string result = _handlerExecutor.Execute<TestRequestWithReturn, IExecutionHandler<TestRequestWithReturn, string>, string>(request, handler.Object);
 
             Assert.AreEqual(expectedResult, result);
 
@@ -113,7 +113,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Setup(h => h.Execute(request))
                 .Throws(exception);
 
-            Assert.Throws<ExecutionTestException>(() => _handlerExecutor.Execute<TestRequestWithReturn, IExecutionHandler<TestRequestWithReturn, string>, string>(handler.Object, request));
+            Assert.Throws<ExecutionTestException>(() => _handlerExecutor.Execute<TestRequestWithReturn, IExecutionHandler<TestRequestWithReturn, string>, string>(request, handler.Object));
 
             handler.Verify(h => h.Execute(request), Times.Once);
             _handlerExecutorLogger.Verify(l => l.CreateScope<TestRequestWithReturn, IExecutionHandler<TestRequestWithReturn, string>, string>(request, handler.Object), Times.Once);
@@ -136,7 +136,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Returns(logScope.Object);
 
 
-            await _handlerExecutor.ExecuteAsync(handler.Object, request);
+            await _handlerExecutor.ExecuteAsync(request, handler.Object);
             handler.Verify(h => h.ExecuteAsync(request), Times.Once);
             _handlerExecutorLogger.Verify(l => l.CreateScopeForAsync(request, handler.Object), Times.Once);
             logScope.Verify(l => l.BeforeExecution(), Times.Once);
@@ -160,7 +160,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Setup(h => h.ExecuteAsync(request))
                 .ThrowsAsync(exception);
 
-            Assert.ThrowsAsync<ExecutionTestException>(async () => await _handlerExecutor.ExecuteAsync(handler.Object, request));
+            Assert.ThrowsAsync<ExecutionTestException>(async () => await _handlerExecutor.ExecuteAsync(request, handler.Object));
 
             handler.Verify(h => h.ExecuteAsync(request), Times.Once);
             _handlerExecutorLogger.Verify(l => l.CreateScopeForAsync(request, handler.Object), Times.Once);
@@ -189,7 +189,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Returns(logScope.Object);
 
 
-            string result = await _handlerExecutor.ExecuteAsync<TestAsyncRequestWithReturn, IAsyncExecutionHandler<TestAsyncRequestWithReturn, string>, string>(handler.Object, request);
+            string result = await _handlerExecutor.ExecuteAsync<TestAsyncRequestWithReturn, IAsyncExecutionHandler<TestAsyncRequestWithReturn, string>, string>(request, handler.Object);
 
             Assert.AreEqual(expectedResult, result);
 
@@ -216,7 +216,7 @@ namespace TOS.CQRS.Tests.Handlers
                 .Setup(h => h.ExecuteAsync(request))
                 .ThrowsAsync(exception);
 
-            Assert.ThrowsAsync<ExecutionTestException>(async () => await _handlerExecutor.ExecuteAsync<TestAsyncRequestWithReturn, IAsyncExecutionHandler<TestAsyncRequestWithReturn, string>, string>(handler.Object, request));
+            Assert.ThrowsAsync<ExecutionTestException>(async () => await _handlerExecutor.ExecuteAsync<TestAsyncRequestWithReturn, IAsyncExecutionHandler<TestAsyncRequestWithReturn, string>, string>(request, handler.Object));
 
             handler.Verify(h => h.ExecuteAsync(request), Times.Once);
             _handlerExecutorLogger.Verify(l => l.CreateScopeForAsync<TestAsyncRequestWithReturn, IAsyncExecutionHandler<TestAsyncRequestWithReturn, string>, string>(request, handler.Object), Times.Once);

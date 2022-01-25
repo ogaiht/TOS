@@ -11,12 +11,12 @@ namespace TOS.CQRS.Dispatchers.Events
 {
     public class EventDispatcher : IEventDispatcher
     {
-        private readonly IHandlerExecutor _handlerExecutor;
+        private readonly IRequestExecutor _handlerExecutor;
         private readonly IExecutionHandlerProvider _executionHandlerProvider;
         private readonly ILogger<EventDispatcher> _logger;
 
         public EventDispatcher(
-            IHandlerExecutor handlerExecutor,
+            IRequestExecutor handlerExecutor,
             IExecutionHandlerProvider executionHandlerProvider,
             ILogger<EventDispatcher> logger)
         {
@@ -27,7 +27,7 @@ namespace TOS.CQRS.Dispatchers.Events
 
         public void Dispatch<TEvent>(TEvent @event) where TEvent : IEvent
         {
-            IEnumerable<IEventHandler<TEvent>> handlers = _executionHandlerProvider.GetHandlersFor<IEventHandler<TEvent>>(false);
+            IEnumerable<IEventHandler<TEvent>> handlers = _executionHandlerProvider.GetHandlers<TEvent, IEventHandler<TEvent>>(false);
 
             if (!handlers.Any())
             {
@@ -38,7 +38,7 @@ namespace TOS.CQRS.Dispatchers.Events
             {
                 try
                 {
-                    _handlerExecutor.Execute(handler, @event);
+                    _handlerExecutor.Execute(@event, handler);
                 }
                 catch (Exception ex)
                 {
@@ -50,7 +50,7 @@ namespace TOS.CQRS.Dispatchers.Events
 
         public async Task DispatchAsync<TEvent>(TEvent @event) where TEvent : IAsyncEvent
         {
-            IEnumerable<IAsyncEventHandler<TEvent>> handlers = _executionHandlerProvider.GetHandlersFor<IAsyncEventHandler<TEvent>>(false);
+            IEnumerable<IAsyncEventHandler<TEvent>> handlers = _executionHandlerProvider.GetAsyncHandlers<TEvent, IAsyncEventHandler<TEvent>>(false);
 
             if (!handlers.Any())
             {
@@ -61,7 +61,7 @@ namespace TOS.CQRS.Dispatchers.Events
             {
                 try
                 {
-                    await _handlerExecutor.ExecuteAsync(handler, @event);
+                    await _handlerExecutor.ExecuteAsync(@event, handler);
                 }
                 catch (Exception ex)
                 {

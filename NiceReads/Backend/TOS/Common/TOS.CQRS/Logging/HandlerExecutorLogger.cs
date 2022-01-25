@@ -9,12 +9,12 @@ namespace TOS.CQRS.Logging
     public class HandlerExecutorLogger : IHandlerExecutorLogger
     {
         private readonly IJsonSerializer _jsonSerializer;
-        private readonly ILogger<HandlerExecutor> _logger;
+        private readonly ILogger<RequestExecutor> _logger;
         private readonly IHandlerExecutorIdGenerator _handlerExecutorIdGenerator;
 
         public HandlerExecutorLogger(
             IJsonSerializer jsonSerializer,
-            ILogger<HandlerExecutor> logger,
+            ILogger<RequestExecutor> logger,
             IHandlerExecutorIdGenerator handlerExecutorIdGenerator
             )
         {

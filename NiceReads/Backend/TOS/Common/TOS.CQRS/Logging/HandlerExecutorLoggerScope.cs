@@ -9,12 +9,12 @@ namespace TOS.CQRS.Logging
 {
     public class HandlerExecutorLoggerScope : Disposable, IHandlerExecutorLoggerScope
     {
-        protected ILogger<HandlerExecutor> Logger { get; }
+        protected ILogger<RequestExecutor> Logger { get; }
         protected string Identity { get; }
         protected Lazy<string> SerializedRequest { get; }
 
         public HandlerExecutorLoggerScope(
-            ILogger<HandlerExecutor> logger,
+            ILogger<RequestExecutor> logger,
             string identity,
             Lazy<string> serializedRequest
             )
@@ -66,7 +66,7 @@ namespace TOS.CQRS.Logging
         private readonly IJsonSerializer _jsonSerializer;
 
         public HandlerExecutorLoggerScope(
-            ILogger<HandlerExecutor> logger,
+            ILogger<RequestExecutor> logger,
             string identity,
             Lazy<string> serializedRequest,
             IJsonSerializer jsonSerializer

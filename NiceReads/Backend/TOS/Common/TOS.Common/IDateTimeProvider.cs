@@ -6,5 +6,7 @@ namespace TOS.Common
     {
         DateTime UtcNow();
         DateTime Now();
+
+        string ToIsoDateString(DateTime dateTime);
     }
 }

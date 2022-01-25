@@ -26,10 +26,8 @@ namespace TOS.Data.MongoDB
                     }
                     else
                     {
-                        mongoClientSettings = MongoClientSettings.FromConnectionString(new MongoConnectionStringBuilder().Build(settings));
+                        mongoClientSettings = MongoClientSettings.FromConnectionString(MongoConnectionStringBuilder.Build(settings));
                     }
-                    //string connectionString = new MongoConnectionStringBuilder().Build(settings);                    
-
                     IMongoClient mongoClient = new MongoClient(mongoClientSettings);
                     IMongoDatabase mongoDatabase = mongoClient.GetDatabase(settings.Database);
                     return mongoDatabase;

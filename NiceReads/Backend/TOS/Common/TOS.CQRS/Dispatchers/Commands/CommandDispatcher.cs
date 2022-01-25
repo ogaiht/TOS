@@ -9,12 +9,12 @@ namespace TOS.CQRS.Dispatchers.Commands
 {
     public class CommandDispatcher : ICommandDispatcher
     {
-        private readonly IHandlerExecutor _handlerExecutor;
+        private readonly IRequestExecutor _handlerExecutor;
         private readonly IExecutionHandlerProvider _executionHandlerProvider;
         private readonly ILogger<CommandDispatcher> _logger;
 
         public CommandDispatcher(
-            IHandlerExecutor handlerExecutor,
+            IRequestExecutor handlerExecutor,
             IExecutionHandlerProvider executionHandlerProvider,
             ILogger<CommandDispatcher> logger)
         {
@@ -26,10 +26,10 @@ namespace TOS.CQRS.Dispatchers.Commands
         public void Execute<TCommand>(TCommand command)
             where TCommand : ICommand
         {
-            ICommandHandler<TCommand> handler = _executionHandlerProvider.GetHandlerFor<ICommandHandler<TCommand>>();
+            ICommandHandler<TCommand> handler = _executionHandlerProvider.GetHandler<TCommand, ICommandHandler<TCommand>>();
             try
             {
-                _handlerExecutor.Execute(handler, command);
+                _handlerExecutor.Execute(command, handler);
             }
             catch (Exception ex)
             {
@@ -41,46 +41,44 @@ namespace TOS.CQRS.Dispatchers.Commands
         public TResult Execute<TCommand, TResult>(TCommand command)
             where TCommand : ICommand<TResult>
         {
-            ICommandHandler<TCommand, TResult> handler = _executionHandlerProvider.GetHandlerFor<ICommandHandler<TCommand, TResult>>();
+            ICommandHandler<TCommand, TResult> handler = _executionHandlerProvider.GetHandler<TCommand, ICommandHandler<TCommand, TResult>, TResult>();
             try
             {
-                return _handlerExecutor.Execute<TCommand, ICommandHandler<TCommand, TResult>, TResult>(handler, command);
+                return _handlerExecutor.Execute<TCommand, ICommandHandler<TCommand, TResult>, TResult>(command, handler);
             }
             catch (Exception ex)
             {
                 LogError<TCommand>(ex, handler);
                 throw;
             }
-
         }
 
         public async Task ExecuteAsync<TAsyncCommand>(TAsyncCommand asyncCommand)
             where TAsyncCommand : IAsyncCommand
         {
-            IAsyncCommandHandler<TAsyncCommand> handler = _executionHandlerProvider.GetHandlerFor<IAsyncCommandHandler<TAsyncCommand>>();
+            IAsyncCommandHandler<TAsyncCommand> asyncHandler = _executionHandlerProvider.GetAsyncHandler<TAsyncCommand, IAsyncCommandHandler<TAsyncCommand>>();
             try
             {
-                await _handlerExecutor.ExecuteAsync(handler, asyncCommand);
+                await _handlerExecutor.ExecuteAsync(asyncCommand, asyncHandler);
             }
             catch (Exception ex)
             {
-                LogError<TAsyncCommand>(ex, handler);
+                LogError<TAsyncCommand>(ex, asyncHandler);
                 throw;
             }
-
         }
 
         public async Task<TResult> ExecuteAsync<TAsyncCommand, TResult>(TAsyncCommand asyncCommand)
             where TAsyncCommand : IAsyncCommand<TResult>
         {
-            IAsyncCommandHandler<TAsyncCommand, TResult> handler = _executionHandlerProvider.GetHandlerFor<IAsyncCommandHandler<TAsyncCommand, TResult>>();
+            IAsyncCommandHandler<TAsyncCommand, TResult> asyncHandler = _executionHandlerProvider.GetAsyncHandler<TAsyncCommand, IAsyncCommandHandler<TAsyncCommand, TResult>, TResult>();
             try
             {
-                return await _handlerExecutor.ExecuteAsync<TAsyncCommand, IAsyncCommandHandler<TAsyncCommand, TResult>, TResult>(handler, asyncCommand);
+                return await _handlerExecutor.ExecuteAsync<TAsyncCommand, IAsyncCommandHandler<TAsyncCommand, TResult>, TResult>(asyncCommand, asyncHandler);
             }
             catch (Exception ex)
             {
-                LogError<TAsyncCommand>(ex, handler);
+                LogError<TAsyncCommand>(ex, asyncHandler);
                 throw;
             }
         }

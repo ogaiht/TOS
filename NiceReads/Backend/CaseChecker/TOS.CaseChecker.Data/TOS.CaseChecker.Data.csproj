@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\TOS\Common\TOS.Data.MongoDB\TOS.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\TOS\Common\TOS.Data\TOS.Data.csproj" />
+    <ProjectReference Include="..\TOS.CaseChecker.Models\TOS.CaseChecker.Models.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -8,11 +8,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CaseChecker\TOS.CaseChecker.Application\TOS.CaseChecker.Application.csproj" />
+    <ProjectReference Include="..\..\..\CaseChecker\TOS.CaseChecker.Configuration\TOS.CaseChecker.Configuration.csproj" />
+    <ProjectReference Include="..\..\..\CaseChecker\TOS.CaseChecker.Data\TOS.CaseChecker.Data.csproj" />
+    <ProjectReference Include="..\..\..\CaseChecker\TOS.CaseChecker.Models\TOS.CaseChecker.Models.csproj" />
     <ProjectReference Include="..\..\Common\TOS.Common.Configuration\TOS.Common.Configuration.csproj" />
     <ProjectReference Include="..\..\Common\TOS.Common.DataModel\TOS.Common.DataModel.csproj" />
     <ProjectReference Include="..\..\Common\TOS.Common\TOS.Common.csproj" />

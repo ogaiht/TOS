@@ -18,8 +18,8 @@ export class ProjectData implements ICollectionItem<Uuid> {
 export class TaskData implements ICollectionItem<Uuid> {
     constructor(
         public title: string = '',
-        public completed: boolean = false,
         public projectId: Uuid = Uuid.EMPTY,
+        public completed: boolean = false,
         public id: Uuid = Uuid.EMPTY
     ) {}
 }
@@ -78,7 +78,7 @@ function createProjectAndTasks(projectName: string, tasks: string[]): void {
 
     const projectId: Uuid = projectCollection.add(new ProjectData(projectName));
     for (let task of tasks) {
-        taskCollection.add(new TaskData(task, false, projectId));
+        taskCollection.add(new TaskData(task, projectId));
     }
 }
 

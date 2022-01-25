@@ -1,5 +1,5 @@
 import { CollectionHelper } from '../common/collections/collection.helper';
-import { Action, Func, Predicate } from '../common/common.types';
+import { Action, constr, Func, Predicate } from '../common/common.types';
 import { ICollectionItem } from './database';
 import { IIdGenerator } from './id.generator';
 
@@ -106,3 +106,54 @@ export class Collection<TItem extends ICollectionItem<TId>, TId> implements ICol
         });
     }
 }
+
+class PropertyIndex<TDocument, TId, TValue> {
+    private readonly index: Map<TValue, Set<TId>> = new Map();
+
+    add(value:TValue, id:TId): void {
+        let set: Set<TId> | undefined = this.index.get(value);
+        if (!set) {
+            set = new Set<TId>();
+            this.index.set(value, set);
+        }
+        set.add(id);
+    }
+}
+
+class Condition<TItem, TProperty extends keyof TItem> {
+    constructor(
+        public readonly type: constr<TItem>,
+        public readonly property: TProperty
+        ) { }
+}
+
+class EqualCondition<TItem, TProperty extends keyof TItem> extends Condition<TItem, TProperty> {
+    public readonly condition: ConditionDefinition = ConditionDefinition.EQUAL;
+    constructor(
+        type: constr<TItem>,
+        property: TProperty,
+        public readonly value: any
+    ) {
+        super(type, property);
+    }
+}
+
+export class User {
+    constructor(
+        public readonly name: string,
+        public readonly email: string
+    ) {
+    }
+}
+
+enum ConditionDefinition {
+    EQUAL,
+    GREATER,
+    SMALLER
+}
+
+class GroupCondition {
+    
+}
+
+const condition: EqualCondition<User, 'name'> = new EqualCondition(User, 'name', 'Thiago');

@@ -15,7 +15,7 @@ namespace TOS.CQRS.Tests.Dispatchers.Events
     public class EventDispatcherTests
     {
         private Mock<IExecutionHandlerProvider> _executionHandlerProvider;
-        private Mock<IHandlerExecutor> _handlerExecutor;
+        private Mock<IRequestExecutor> _handlerExecutor;
         private Mock<ILogger<EventDispatcher>> _logger;
         private EventDispatcher _eventDispatcher;
 
@@ -23,7 +23,7 @@ namespace TOS.CQRS.Tests.Dispatchers.Events
         public void SetUp()
         {
             _executionHandlerProvider = new Mock<IExecutionHandlerProvider>();
-            _handlerExecutor = new Mock<IHandlerExecutor>();
+            _handlerExecutor = new Mock<IRequestExecutor>();
             _logger = new Mock<ILogger<EventDispatcher>>();
             _eventDispatcher = new EventDispatcher(
                 _handlerExecutor.Object,
@@ -44,15 +44,15 @@ namespace TOS.CQRS.Tests.Dispatchers.Events
                 };
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlersFor<IEventHandler<IEvent>>(false))
+                .Setup(p => p.GetHandlers<IEvent, IEventHandler<IEvent>>(false))
                 .Returns(handlers);
 
             _eventDispatcher.Dispatch(@event);
 
             _handlerExecutor
-                .Verify(e => e.Execute(eventHandler1.Object, @event));
+                .Verify(e => e.Execute(@event, eventHandler1.Object));
             _handlerExecutor
-                .Verify(e => e.Execute(eventHandler1.Object, @event));
+                .Verify(e => e.Execute(@event, eventHandler2.Object));
         }
 
         [Test]
@@ -74,16 +74,16 @@ namespace TOS.CQRS.Tests.Dispatchers.Events
                 };
 
             _executionHandlerProvider
-                .Setup(p => p.GetHandlersFor<IAsyncEventHandler<IAsyncEvent>>(false))
+                .Setup(p => p.GetAsyncHandlers<IAsyncEvent, IAsyncEventHandler<IAsyncEvent>>(false))
                 .Returns(handlers);
 
 
             await _eventDispatcher.DispatchAsync(asyncEvent);
 
             _handlerExecutor
-                .Verify(e => e.ExecuteAsync(eventHandler1.Object, asyncEvent));
+                .Verify(e => e.ExecuteAsync(asyncEvent, eventHandler1.Object));
             _handlerExecutor
-                .Verify(e => e.ExecuteAsync(eventHandler1.Object, asyncEvent));
+                .Verify(e => e.ExecuteAsync(asyncEvent, eventHandler2.Object));
         }
     }
 }

@@ -23,7 +23,7 @@ namespace TOS.CQRS
                 .AddTransient<ICommandDispatcher, CommandDispatcher>()
                 .AddTransient<IQueryDispatcher, QueryDispatcher>()
                 .AddTransient<IEventDispatcher, EventDispatcher>()
-                .AddTransient<IHandlerExecutor, HandlerExecutor>()
+                .AddTransient<IRequestExecutor, RequestExecutor>()
                 .AddTransient<IHandlerExecutorIdGenerator, HandlerExecutorIdGenerator>()
                 .AddTransient<IHandlerExecutorLogger, HandlerExecutorLogger>();
             return services;

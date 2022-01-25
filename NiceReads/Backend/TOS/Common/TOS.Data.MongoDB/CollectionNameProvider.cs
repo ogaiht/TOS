@@ -7,8 +7,11 @@ namespace TOS.Data.MongoDB
 {
     public class CollectionNameProvider : ICollectionNameProvider
     {
+        private static readonly object SyncLock = new object();
+
         private readonly IPlurilizer _plurilizer;
         private readonly Dictionary<Type, string> _collectionNames;
+
 
         public CollectionNameProvider(IPlurilizer plurilizer)
         {
@@ -19,20 +22,27 @@ namespace TOS.Data.MongoDB
         public string GetCollectionName<TModel>()
         {
             Type modelType = typeof(TModel);
-            if (!_collectionNames.TryGetValue(modelType, out string name))
+            if (!_collectionNames.ContainsKey(modelType))
             {
-                object[] collectionName = modelType.GetCustomAttributes(typeof(CollectionNameAttribute), false);
-                if (collectionName != null && collectionName.Length == 1)
+                lock (SyncLock)
                 {
-                    name = ((CollectionNameAttribute)collectionName[0]).Name;
+                    if (!_collectionNames.ContainsKey(modelType))
+                    {
+                        object[] collectionName = modelType.GetCustomAttributes(typeof(CollectionNameAttribute), false);
+                        string name;
+                        if (collectionName != null && collectionName.Length == 1)
+                        {
+                            name = ((CollectionNameAttribute)collectionName[0]).Name;
+                        }
+                        else
+                        {
+                            name = _plurilizer.Plurilize(modelType.Name);
+                        }
+                        _collectionNames.Add(modelType, name);
+                    }
                 }
-                else
-                {
-                    name = _plurilizer.Plurilize(modelType.Name);
-                }
-                _collectionNames.Add(modelType, name);
             }
-            return name;
+            return _collectionNames[modelType];
         }
     }
 }
