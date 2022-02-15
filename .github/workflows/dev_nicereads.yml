@@ -20,16 +20,19 @@ jobs:
       with:
         dotnet-version: '5.0'
 
-    - name: Build with dotnet
-      run: dotnet build TOS.sln --configuration Release
-
+    - name: Build
+      run: dotnet build TOS.sln --configuration Release --no-restore
+      
+    - name: Test
+      run: dotnet test --no-restore --verbosity normal
+      
     - name: dotnet publish
       run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: 'nicereads'
-        slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_2f19571d2c984f0abc50f8893e825a50 }}
-        package: ${{env.DOTNET_ROOT}}/myapp 
+    #- name: Deploy to Azure Web App
+    #  uses: azure/webapps-deploy@v2
+    #  with:
+    #    app-name: 'nicereads'
+    #    slot-name: 'production'
+    #    publish-profile: ${{ secrets.AzureAppService_PublishProfile_2f19571d2c984f0abc50f8893e825a50 }}
+    #    package: ${{env.DOTNET_ROOT}}/myapp 
