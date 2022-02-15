@@ -21,7 +21,7 @@ jobs:
         dotnet-version: '5.0'
         
     - name: Install dependencies
-      run: dotnet restore
+      run: dotnet restore TOS.sln
       
     - name: Build
       run: dotnet build TOS.sln --configuration Release --no-restore
